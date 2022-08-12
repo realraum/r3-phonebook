@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>r3 phonebook</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
@@ -15,6 +16,58 @@
             <button type="submit">Call</button>
             <button type="reset">Reset</button>
         </form>
+        <hr>
+        <noscript>
+            <p>
+                <strong>Please enable JavaScript to load the phonebook.</strong>
+            </p>
+        </noscript>
+        <table id="phonebook">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Phone number</th>
+                    <th>Call</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody id ="phonebook-body">
+            </tbody>
+        </table>
+        <hr>
+        <form action="/api/add_phone" method="post">
+            <label>
+                Name
+                <input type="text" name="name">
+            </label>
+            <label>
+                Phone number
+                <input type="text" name="phone_number">
+            </label>
+            <button type="submit">Add</button>
+            <button type="reset">Reset</button>
+        </form>
     </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $.ajax({
+                url: "/api/phone_list",
+                method: "get",
+                success: function(data) {
+                    $.each(data, function(index, value) {
+                        $("#phonebook-body").append(
+                            "<tr>" +
+                                "<td>" + value.name + "</td>" +
+                                "<td>" + value.phone_number + "</td>" +
+                                "<td><a href='/api/call?phone_number=" + value.phone_number + "'><button class='btn-action btn-call'>Call</button></a></td>" +
+                                "<td><a href='/api/remove_phone?phone_number=" + value.phone_number + "'><button class='btn-action btn-delete'>Delete</button></a></td>" +
+                            "</tr>"
+                        );
+                    });
+                }
+            });
+        });
+    </script>
 </body>
 </html>

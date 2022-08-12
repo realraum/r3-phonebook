@@ -3,6 +3,8 @@ import Axios from 'axios';
 import bodyParser from 'body-parser';
 const api = express.Router();
 
+import * as config from './config.js';
+
 api.use(bodyParser.json());
 api.use(bodyParser.urlencoded({ extended: true }));
 
@@ -47,11 +49,49 @@ api.get('/call/:id', async (req, res) => {
 api.get('/call', async (req, res) => {
     const { phone_number } = req.query;
 
-    console.log(phone_number, req.query);
-
     await call(phone_number);
 
     res.redirect('/');
+});
+
+api.get('/phone_list', (req, res) => {
+    const phone_list = config.getPhoneList();
+    res.json(phone_list);
+});
+
+api.post('/add_phone', (req, res) => {
+    const { phone_number, name } = req.body;
+
+    config.addPhone(phone_number, name);
+    res.redirect('/');
+});
+
+api.post('/remove_phone', (req, res) => {
+    const { phone_number } = req.body;
+
+    config.removePhone(phone_number);
+    res.redirect('/');
+});
+
+api.get('/remove_phone', (req, res) => {
+    const { phone_number } = req.query;
+
+    config.removePhone(phone_number);
+    res.redirect('/');
+});
+
+api.get('/phone_name', (req, res) => {
+    const { phone_number } = req.query;
+
+    const name = config.getPhoneName(phone_number);
+    res.json({ name });
+});
+
+api.get('/phone_number', (req, res) => {
+    const { name } = req.query;
+
+    const phone_number = config.getPhoneNumber(name);
+    res.json({ phone_number });
 });
 
 export default api;
